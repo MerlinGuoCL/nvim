@@ -55,8 +55,36 @@ vim.o.splitright = true
 
 
 
+--Latex 设置
+vim.g.tex_flavor = 'latex'
+vim.g.vimtex_quickfix_mode = 0
+vim.g.vimtex_view_general_viewer = '/Applications/Skim.app/Contents/SharedSupport/displayline'
 
+vim.g.vimtex_view_general_options = '-r @line @pdf @tex'
 
+-- This adds a callback hook that updates Skim after compilation
+vim.g.vimtex_compiler_callback_hooks = {'UpdateSkim'}
+
+-- Define the function to update Skim after compilation
+local function UpdateSkim(status)
+  if not status then return end
+
+  local out = vim.b.vimtex.out()
+  local tex = vim.fn.expand('%:p')
+  local cmd = {vim.g.vimtex_view_general_viewer, '-r'}
+
+  if not vim.fn.empty(vim.fn.system('pgrep Skim')) then
+    table.insert(cmd, '-g')
+  end
+
+  if vim.fn.has('nvim') then
+    vim.api.nvim_create_job(cmd + {vim.fn.line('.'), out, tex})
+  elseif vim.fn.has('job') then
+    vim.api.nvim_create_job(cmd + {vim.fn.line('.'), out, tex})
+  else
+    vim.fn.system(table.concat(cmd + {vim.fn.line('.'), vim.fn.shellescape(out), vim.fn.shellescape(tex)}, ' '))
+  end
+end
 
 
 

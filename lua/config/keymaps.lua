@@ -68,6 +68,8 @@ map("n", "<leader>l", "<C-w>l", opt)
 
 
 
+vim.keymap.set("n", "<leader>mp", ":silent !osascript ~/.config/nvim/script/mkdp_windowSplit.applescript<cr>:MarkdownPreview<cr>", { desc = "markdown preview", remap = true, silent = true})
+
 
 
 
